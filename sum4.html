@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    /**
+     * @param {number[]} nums
+     * @param {number} target
+     * @return {number[][]}
+     */
+    var fourSum = function (nums, target) {
+        var numsSorted = nums.sort(function (a, b) {
+                return a - b;
+            }),
+            indexes = [0, 1, 2, 3],
+            result = [],
+            numsLen = nums.length,
+            aMax = numsSorted[numsLen - 4],
+            bMax = numsSorted[numsLen - 3],
+            cMax = numsSorted[numsLen - 2],
+            dMax = numsSorted[numsLen - 1];
+        if (numsLen < 4) { return result }
+        else if ( aMax + bMax + cMax + dMax < target ) { return result }
+
+        function next(i) {
+            if (i < 0) { return } // Underflow
+            if (indexes[i] === (numsLen - (4 - i))) {
+                next(i - 1); // Max index reached. Move one level down
+            } else if (numsSorted[indexes[i]] === numsSorted[indexes[i] + 1]) {
+                indexes[i] += 1; // Skip the same number
+                next(i);
+            } else { // Set current level and levels above
+                for (var j = indexes[i]; i < indexes.length; i++, j++) {
+                    indexes[i] = j + 1;
+                }
+            }
+        }
+
+        while (true) {
+            var a = numsSorted[indexes[0]],
+                b = numsSorted[indexes[1]],
+                c = numsSorted[indexes[2]],
+                d = numsSorted[indexes[3]];
+            if ((a + b + c + d) === target) {
+                result.push([a, b, c, d]);
+            }
+            if (a + b + c + d >= target) {
+                if (indexes[3] === indexes[2] + 1) {
+                    if (indexes[2] === indexes[1] + 1) {
+                        if (indexes[1] === indexes[0] + 1) { break }
+                        else { next(0) }
+                    } else { next(1) }
+                } else { next(2) }
+            } else if (a + b + c + dMax < target ) {
+                if (a + b + cMax + dMax < target) {
+                    if (a + bMax + cMax + dMax < target ) {
+                        if (aMax + bMax + cMax + dMax < target) { break }
+                        else { next(0) }
+                    } else { next(1) }
+                } else { next(2) }
+            } else { next(3) }
+        }
+        return result;
+
+    };
+
+    console.log(fourSum([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, -2, -3, -1, -5, -6, -7, -2, -1, -1, -1, -1, -1, -20, -20, -20, -20, -19, -19], 0));
+</script>
+</body>
+</html>
